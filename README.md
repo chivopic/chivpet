@@ -2,6 +2,10 @@
 
 > A reactive terminal companion pet for developer workflows.
 
+<p align="center">
+  <img src="assets/preview.png" alt="chivpet preview" width="840" />
+</p>
+
 `chivpet` is an intelligent, developer-aware terminal pet designed for developers using Ghostty, Foot, tmux, and modern Linux/Wayland workflows. Unlike standalone toy animations that lock up your terminal, `chivpet` lives alongside your daily development: it reacts to your `git push`, cheers when your test suite passes green, gets sad when builds fail, and levels up as you code.
 
 ---
