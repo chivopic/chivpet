@@ -10,3 +10,5 @@ serde_json = "1.0"
 tokio = { version = "1.43", features = ["full"] }
 dirs = "5.0"
 anyhow = "1.0"
+ratatui = "0.29"
+crossterm = "0.28"

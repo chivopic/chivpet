@@ -70,6 +70,9 @@ chivpet hook fish | source
 # View pet status, level, mood, energy, and stats
 chivpet status
 
+# Launch interactive animated TUI (ideal for tmux / Ghostty split panes)
+chivpet tui
+
 # Output raw JSON (useful for custom status bars like Waybar)
 chivpet status --json
 
@@ -118,9 +121,10 @@ flowchart TD
 ## 🗺️ Roadmap
 
 - [x] **Phase 1**: Core Daemon, UDS IPC, state machine, CLI commands, and Shell hooks.
-- [ ] **Phase 2**: Dedicated TUI mode with Ratatui for tmux / Zellij panes.
-- [ ] **Phase 3**: Omarchy / Wayland transparent desktop floating overlay (`wlr-layer-shell`).
-- [ ] **Phase 4**: Custom themes and ASCII / pixel sprite sheets.
+- [x] **Phase 2**: Dedicated TUI mode with Ratatui for tmux / Zellij panes.
+- [ ] **Phase 3**: AI Agent Integration (Codex / Claude Code lifecycle hooks).
+- [ ] **Phase 4**: Omarchy / Wayland transparent desktop floating overlay (`wlr-layer-shell`).
+- [ ] **Phase 5**: Custom themes and ASCII / pixel sprite sheets.
 
 ---
 

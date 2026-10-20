@@ -49,6 +49,8 @@ pub enum Commands {
         /// Target shell (zsh, bash, fish)
         shell: ShellType,
     },
+    /// Open interactive animated TUI view (for tmux / splits)
+    Tui,
 }
 
 #[derive(Subcommand, Debug)]
@@ -113,6 +115,9 @@ pub async fn run_cli(cli: Cli) -> Result<()> {
         }
         Commands::Hook { shell } => {
             handle_hook(shell);
+        }
+        Commands::Tui => {
+            crate::tui::run_tui()?;
         }
     }
     Ok(())
