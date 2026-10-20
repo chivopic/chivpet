@@ -1,0 +1,4 @@
+/target
+*.sock
+.chivpet*
+*.tmp.*
