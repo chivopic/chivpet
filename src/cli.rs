@@ -209,9 +209,11 @@ fn handle_event(action: EventSubcommand) -> Result<()> {
 
 fn render_pet_card(state: &PetState, daemon_online: bool) {
     let ascii_lines: Vec<&str> = state.status.ascii_art().lines().collect();
-    let l1 = ascii_lines.first().unwrap_or(&"");
-    let l2 = ascii_lines.get(1).unwrap_or(&"");
-    let l3 = ascii_lines.get(2).unwrap_or(&"");
+    let l0 = ascii_lines.first().unwrap_or(&"");
+    let l1 = ascii_lines.get(1).unwrap_or(&"");
+    let l2 = ascii_lines.get(2).unwrap_or(&"");
+    let l3 = ascii_lines.get(3).unwrap_or(&"");
+    let l4 = ascii_lines.get(4).unwrap_or(&"");
 
     let daemon_tag = if daemon_online {
         "\x1b[32m● online\x1b[0m"
@@ -220,21 +222,17 @@ fn render_pet_card(state: &PetState, daemon_online: bool) {
     };
 
     let next_xp = state.xp_for_next_level();
-    let xp_bar = make_bar(state.xp, next_xp, 15);
-    let satiety_bar = make_bar(state.satiety, 100, 15);
-    let mood_bar = make_bar(state.mood, 100, 15);
-    let energy_bar = make_bar(state.energy, 100, 15);
+    let xp_bar = make_bar(state.xp, next_xp, 12);
+    let sat_bar = make_bar(state.satiety, 100, 8);
+    let mood_bar = make_bar(state.mood, 100, 8);
+    let nrg_bar = make_bar(state.energy, 100, 8);
 
     println!();
-    println!("  {:<12}  🐾 \x1b[1m{}\x1b[0m (Lv.{}) [{}]", l1, state.name, state.level, daemon_tag);
-    println!("  {:<12}  Status: {} \x1b[1m{:?}\x1b[0m - {}", l2, state.status.emoji(), state.status, state.status_message);
-    println!("  {:<12}  XP:     [{}] {}/{}", l3, xp_bar, state.xp, next_xp);
-    println!();
-    println!("  Satiety: [{}] {:>3}/100", satiety_bar, state.satiety);
-    println!("  Mood:    [{}] {:>3}/100", mood_bar, state.mood);
-    println!("  Energy:  [{}] {:>3}/100", energy_bar, state.energy);
-    println!();
-    println!("  Commands: {} total ({} ok, {} failed)", state.total_commands, state.successful_commands, state.failed_commands);
+    println!("  {:<24}  🐾 \x1b[1m{}\x1b[0m (Lv.{}) [{}]", l0, state.name, state.level, daemon_tag);
+    println!("  {:<24}  Status: {} \x1b[1m{:?}\x1b[0m - {}", l1, state.status.emoji(), state.status, state.status_message);
+    println!("  {:<24}  XP:     [{}] {}/{}", l2, xp_bar, state.xp, next_xp);
+    println!("  {:<24}  Satiety:[{}] {:>3}  Mood:[{}] {:>3}  Energy:[{}] {:>3}", l3, sat_bar, state.satiety, mood_bar, state.mood, nrg_bar, state.energy);
+    println!("  {:<24}  Commands: {} total ({} ok, {} failed)", l4, state.total_commands, state.successful_commands, state.failed_commands);
     println!();
 }
 

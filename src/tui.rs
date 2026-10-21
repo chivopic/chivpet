@@ -41,7 +41,7 @@ pub fn run_tui() -> Result<()> {
 
     let mut state = fetch_current_state();
     let mut tick_count: usize = 0;
-    let tick_rate = Duration::from_millis(250); // 4 FPS animation loop
+    let tick_rate = Duration::from_millis(160); // ~6.2 FPS smooth animation loop
     let mut last_tick = Instant::now();
     let mut last_fetch = Instant::now();
 
@@ -121,7 +121,7 @@ fn render_ui(f: &mut Frame, state: &PetState, tick: usize) {
         .direction(Direction::Vertical)
         .margin(1)
         .constraints([
-            Constraint::Length(7), // Pet & Status
+            Constraint::Length(8), // Pet & Status
             Constraint::Length(8), // Gauges & Stats
             Constraint::Length(1), // Footer / Hotkeys
         ])
@@ -134,14 +134,7 @@ fn render_ui(f: &mut Frame, state: &PetState, tick: usize) {
 
 fn render_compact_ui(f: &mut Frame, area: Rect, state: &PetState, tick: usize, is_online: bool) {
     let anim = get_animation_frame(state.status, tick);
-    let mut text = Vec::new();
-
-    for line in anim.lines {
-        text.push(Line::from(Span::styled(
-            *line,
-            Style::default().fg(anim.color).add_modifier(Modifier::BOLD),
-        )));
-    }
+    let mut text = anim.lines;
 
     let status_dot = if is_online {
         Span::styled("●", Style::default().fg(Color::Rgb(166, 227, 161)))
@@ -161,7 +154,7 @@ fn render_compact_ui(f: &mut Frame, area: Rect, state: &PetState, tick: usize, i
             Block::default()
                 .borders(Borders::ALL)
                 .border_type(BorderType::Rounded)
-                .border_style(Style::default().fg(Color::Rgb(69, 71, 90)))
+                .border_style(Style::default().fg(anim.primary_color))
                 .title("🐾 Chiv"),
         );
 
@@ -174,30 +167,19 @@ fn render_pet_header(f: &mut Frame, area: Rect, state: &PetState, tick: usize, i
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            Constraint::Length(18), // Sprite
+            Constraint::Length(28), // Sprite
             Constraint::Min(20),   // Info
         ])
         .split(area);
 
-    // Sprite Block
-    let sprite_lines: Vec<Line> = anim
-        .lines
-        .iter()
-        .map(|l| {
-            Line::from(Span::styled(
-                *l,
-                Style::default().fg(anim.color).add_modifier(Modifier::BOLD),
-            ))
-        })
-        .collect();
-
-    let sprite_widget = Paragraph::new(sprite_lines)
+    let sprite_widget = Paragraph::new(anim.lines)
         .alignment(Alignment::Center)
         .block(
             Block::default()
                 .borders(Borders::ALL)
                 .border_type(BorderType::Rounded)
-                .border_style(Style::default().fg(anim.color)),
+                .border_style(Style::default().fg(anim.primary_color))
+                .title("Pet"),
         );
     f.render_widget(sprite_widget, chunks[0]);
 
@@ -222,7 +204,7 @@ fn render_pet_header(f: &mut Frame, area: Rect, state: &PetState, tick: usize, i
             Span::raw(format!("{} ", state.status.emoji())),
             Span::styled(
                 format!("{:?}", state.status),
-                Style::default().fg(anim.color).add_modifier(Modifier::BOLD),
+                Style::default().fg(anim.primary_color).add_modifier(Modifier::BOLD),
             ),
         ]),
         Line::from(vec![

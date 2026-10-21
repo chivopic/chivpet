@@ -27,13 +27,13 @@ impl PetStatus {
 
     pub fn ascii_art(&self) -> &'static str {
         match self {
-            PetStatus::Sleeping => " /\\_/\\\n( -.- ) zZz\n > ^ <",
-            PetStatus::Idle => " /\\_/\\\n( o.o )\n > ^ <",
-            PetStatus::Focused => " /\\_/\\\n( O.O )\n > ^ <",
-            PetStatus::Cheering => " /\\_/\\\n( ^.^ )/\n > ^ < *purr*",
-            PetStatus::Frustrated => " /\\_/\\\n( T.T )\n > v <",
-            PetStatus::Eating => " /\\_/\\\n( >.< )~🐟\n > ^ < nom!",
-            PetStatus::Hacking => " /\\_/\\\n( =.= )[⌨]\n > ^ < tap tap",
+            PetStatus::Sleeping => "    /\\_/\\\n   ( -.- )  zZz\n  / (   ) \\\n (____)____)\n            ",
+            PetStatus::Idle => "    /\\_/\\\n   ( o.o )\n   /     \\   ~\n  (  ( )  )\n   (__)_(__)",
+            PetStatus::Focused => "    /\\_/\\\n   ( O.O )  !\n  / (   ) \\\n (  ( )  )\n  (__)_(__)",
+            PetStatus::Cheering => "    /\\_/\\   ✨\n  \\( ^.^ )/  🎉\n   /(   )\\   *purr*\n  (__)_(__)\n            ",
+            PetStatus::Frustrated => "    \\___/\n   ( T.T )  💧\n  / (   ) \\\n (  ( )  )\n  (__)_(__)",
+            PetStatus::Eating => "    /\\_/\\\n   ( >.< )~🐟\n  / (o)o \\  *nom*\n (  ( )  )\n  (__)_(__)",
+            PetStatus::Hacking => "    /\\_/\\\n   ( •̀ ω •́ )   💻\n  /  (   \\__ [===] tap!\n (____)____(__)\n            ",
         }
     }
 }
