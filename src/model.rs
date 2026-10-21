@@ -13,6 +13,7 @@ pub enum PetStatus {
 }
 
 impl PetStatus {
+    #[allow(dead_code)]
     pub fn emoji(&self) -> &'static str {
         match self {
             PetStatus::Sleeping => "💤",

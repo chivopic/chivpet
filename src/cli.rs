@@ -215,36 +215,15 @@ fn render_pet_card(state: &PetState, daemon_online: bool) {
     let l3 = ascii_lines.get(3).unwrap_or(&"");
     let l4 = ascii_lines.get(4).unwrap_or(&"");
 
-    let daemon_tag = if daemon_online {
-        "\x1b[32m● online\x1b[0m"
-    } else {
-        "\x1b[31m○ offline (using saved state)\x1b[0m"
-    };
-
-    let next_xp = state.xp_for_next_level();
-    let xp_bar = make_bar(state.xp, next_xp, 12);
-    let sat_bar = make_bar(state.satiety, 100, 8);
-    let mood_bar = make_bar(state.mood, 100, 8);
-    let nrg_bar = make_bar(state.energy, 100, 8);
+    let daemon_dot = if daemon_online { "\x1b[32m●\x1b[0m" } else { "\x1b[31m○\x1b[0m" };
 
     println!();
-    println!("  {:<24}  🐾 \x1b[1m{}\x1b[0m (Lv.{}) [{}]", l0, state.name, state.level, daemon_tag);
-    println!("  {:<24}  Status: {} \x1b[1m{:?}\x1b[0m - {}", l1, state.status.emoji(), state.status, state.status_message);
-    println!("  {:<24}  XP:     [{}] {}/{}", l2, xp_bar, state.xp, next_xp);
-    println!("  {:<24}  Satiety:[{}] {:>3}  Mood:[{}] {:>3}  Energy:[{}] {:>3}", l3, sat_bar, state.satiety, mood_bar, state.mood, nrg_bar, state.energy);
-    println!("  {:<24}  Commands: {} total ({} ok, {} failed)", l4, state.total_commands, state.successful_commands, state.failed_commands);
+    println!("  {:<22}  🐾 \x1b[1m{}\x1b[0m · {}", l0, state.name, daemon_dot);
+    println!("  {:<22}  {}", l1, state.status_message);
+    println!("  {:<22}  Lv.{} · {} commands", l2, state.level, state.total_commands);
+    println!("  {:<22}", l3);
+    println!("  {:<22}", l4);
     println!();
-}
-
-fn make_bar(value: u32, max: u32, width: usize) -> String {
-    if max == 0 {
-        return " ".repeat(width);
-    }
-    let filled = ((value as f64 / max as f64) * width as f64).round() as usize;
-    let filled = filled.min(width);
-    let empty = width.saturating_sub(filled);
-
-    format!("{}{}", "=".repeat(filled), " ".repeat(empty))
 }
 
 fn handle_hook(shell: ShellType) {

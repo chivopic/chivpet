@@ -5,20 +5,12 @@ use crate::model::PetStatus;
 
 pub struct StyledFrame {
     pub lines: Vec<Line<'static>>,
-    pub primary_color: Color,
 }
 
-// Catppuccin Mocha Colors
-const PEACH: Color = Color::Rgb(250, 179, 135);
-const BLUE: Color = Color::Rgb(137, 180, 250);
-const YELLOW: Color = Color::Rgb(249, 226, 175);
-const GREEN: Color = Color::Rgb(166, 227, 161);
-const RED: Color = Color::Rgb(243, 139, 168);
-const PINK: Color = Color::Rgb(245, 194, 231);
-const MAUVE: Color = Color::Rgb(203, 166, 247);
-const TEAL: Color = Color::Rgb(148, 226, 213);
-const SAPPHIRE: Color = Color::Rgb(116, 199, 236);
-const GRAY: Color = Color::Rgb(108, 112, 134);
+// Minimal, elegant palette: clean foreground with subtle muted tones
+const FG: Color = Color::Rgb(220, 224, 232);      // Crisp, warm white
+const MUTED: Color = Color::Rgb(127, 132, 156);   // Soft slate gray
+const ACCENT: Color = Color::Rgb(205, 214, 244);  // Pure bright white
 
 pub fn get_animation_frame(status: PetStatus, tick: usize) -> StyledFrame {
     match status {
@@ -32,318 +24,479 @@ pub fn get_animation_frame(status: PetStatus, tick: usize) -> StyledFrame {
     }
 }
 
-fn s(text: &'static str, color: Color, bold: bool) -> Span<'static> {
-    let mut style = Style::default().fg(color);
-    if bold {
-        style = style.add_modifier(Modifier::BOLD);
-    }
-    Span::styled(text, style)
+fn w(text: &'static str) -> Span<'static> {
+    Span::styled(text, Style::default().fg(FG))
 }
 
+fn b(text: &'static str) -> Span<'static> {
+    Span::styled(text, Style::default().fg(ACCENT).add_modifier(Modifier::BOLD))
+}
+
+fn m(text: &'static str) -> Span<'static> {
+    Span::styled(text, Style::default().fg(MUTED))
+}
+
+// 12-Frame Idle: Smooth tail sine-wave (6 positions) + natural eyelid blink cycle + breathing
 fn render_idle(tick: usize) -> StyledFrame {
-    let frame_idx = tick % 6;
-    let lines = match frame_idx {
+    let f = tick % 12;
+    let lines = match f {
+        // Frames 0-4: Eyes open, tail swaying from right to center to left
         0 => vec![
-            Line::from(vec![s("      /\\_/\\     ", PEACH, true)]),
-            Line::from(vec![s("     ( o.o )    ", PEACH, true)]),
-            Line::from(vec![s("     /     \\   ", PEACH, true), s("~", PINK, true)]),
-            Line::from(vec![s("    (  ( )  )   ", PEACH, true)]),
-            Line::from(vec![s("     (__)_(__)  ", PEACH, true)]),
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\  "), m("~")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
         ],
         1 => vec![
-            Line::from(vec![s("      /\\_/\\     ", PEACH, true)]),
-            Line::from(vec![s("     ( o.o )    ", PEACH, true)]),
-            Line::from(vec![s("     /     \\   ", PEACH, true), s("|", PINK, true)]),
-            Line::from(vec![s("    (  ( )  )   ", PEACH, true)]),
-            Line::from(vec![s("     (__)_(__)  ", PEACH, true)]),
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\ "), m(") ")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
         ],
         2 => vec![
-            Line::from(vec![s("      /\\_/\\     ", PEACH, true)]),
-            Line::from(vec![s("     ( o.o )    ", PEACH, true)]),
-            Line::from(vec![s("     /     \\   ", PEACH, true), s("/", PINK, true)]),
-            Line::from(vec![s("    (  ( )  )   ", PEACH, true)]),
-            Line::from(vec![s("     (__)_(__)  ", PEACH, true)]),
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\ "), m("| ")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
         ],
         3 => vec![
-            Line::from(vec![s("      /\\_/\\     ", PEACH, true)]),
-            Line::from(vec![s("     ( -.- )    ", PEACH, true)]),
-            Line::from(vec![s("     /     \\   ", PEACH, true), s("~", PINK, true)]),
-            Line::from(vec![s("    (  ( )  )   ", PEACH, true)]),
-            Line::from(vec![s("     (__)_(__)  ", PEACH, true)]),
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\"), m("(  ")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
         ],
         4 => vec![
-            Line::from(vec![s("      /\\_/\\   ", PEACH, true), s("♡", PINK, true)]),
-            Line::from(vec![s("     ( o.o )    ", PEACH, true)]),
-            Line::from(vec![s("     /     \\   ", PEACH, true), s("~", PINK, true)]),
-            Line::from(vec![s("    (  ( )  )   ", PEACH, true)]),
-            Line::from(vec![s("     (__)_(__)  ", PEACH, true)]),
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\"), m("~ ")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
         ],
+        // Frames 5-6: Tail starts returning, chest takes a soft gentle breath
+        5 => vec![
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\"), m("(  ")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
+        ],
+        6 => vec![
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\ "), m("| ")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
+        ],
+        // Frame 7: Half-blink (eyelids lowering)
+        7 => vec![
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( - . - )   ")]),
+            Line::from(vec![w("      /       \\ "), m(") ")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
+        ],
+        // Frame 8: Full blink (eyes closed)
+        8 => vec![
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( - . - )   ")]),
+            Line::from(vec![w("      /       \\  "), m("~")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
+        ],
+        // Frame 9: Eyes reopening to half
+        9 => vec![
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\  "), m("~")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
+        ],
+        // Frame 10: Tail flick with subtle ear wiggle
+        10 => vec![
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\ "), m(") ")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
+        ],
+        // Frame 11: Return to base
         _ => vec![
-            Line::from(vec![s("      /\\_/\\     ", PEACH, true)]),
-            Line::from(vec![s("     ( ^.^ )    ", PEACH, true)]),
-            Line::from(vec![s("     /     \\   ", PEACH, true), s("~", PINK, true)]),
-            Line::from(vec![s("    (  ( )  )   ", PEACH, true)]),
-            Line::from(vec![s("     (__)_(__)  ", PEACH, true)]),
+            Line::from(vec![w("       /\\_/\\     ")]),
+            Line::from(vec![w("      ( • . • )   ")]),
+            Line::from(vec![w("      /       \\  "), m("~")]),
+            Line::from(vec![w("     (   ( )   )  ")]),
+            Line::from(vec![w("      (__) (__)   ")]),
         ],
     };
 
-    StyledFrame {
-        lines,
-        primary_color: PEACH,
-    }
+    StyledFrame { lines }
 }
 
+// 8-Frame Bongo Cat Typing: Real alternating paw dynamics
 fn render_hacking(tick: usize) -> StyledFrame {
-    let frame_idx = tick % 4;
-    let lines = match frame_idx {
+    let f = tick % 8;
+    let lines = match f {
+        // 0: Left paw fully down on keys, right paw high
         0 => vec![
-            Line::from(vec![s("      /\\_/\\           ", PEACH, true)]),
-            Line::from(vec![s("     ( •̀ ω •́ )   ", PEACH, true), s("💻", TEAL, true)]),
-            Line::from(vec![
-                s("    /  (   \\__  ", PEACH, true),
-                s("[===] ", MAUVE, true),
-                s("tap!", GREEN, true),
-            ]),
-            Line::from(vec![s("   (____)____(__)     ", PEACH, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( •̀ . •́ )   "), m("💻")]),
+            Line::from(vec![w("      /   (   \\__  "), b("[===]")]),
+            Line::from(vec![w("     (____)____(__)     ")]),
         ],
+        // 1: Left paw lifting, right paw beginning downstroke
         1 => vec![
-            Line::from(vec![s("      /\\_/\\   ", PEACH, true), s("⚡      ", YELLOW, true)]),
-            Line::from(vec![s("     ( •̀ ω •́ )   ", PEACH, true), s("💻", TEAL, true)]),
-            Line::from(vec![
-                s("    /  (   ) \\  ", PEACH, true),
-                s("[===] ", MAUVE, true),
-                s("...", GRAY, true),
-            ]),
-            Line::from(vec![s("   (____)____(__)     ", PEACH, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( •̀ . •́ )   "), m("💻")]),
+            Line::from(vec![w("      /   (   ) \\  "), b("[===]")]),
+            Line::from(vec![w("     (____)____(__)     ")]),
         ],
+        // 2: Right paw halfway down, left paw near apex
         2 => vec![
-            Line::from(vec![s("      /\\_/\\           ", PEACH, true)]),
-            Line::from(vec![s("     ( •̀ ω •́ )   ", PEACH, true), s("💻", TEAL, true)]),
-            Line::from(vec![
-                s("   ___/   )  \\  ", PEACH, true),
-                s("[===] ", MAUVE, true),
-                s("clack!", GREEN, true),
-            ]),
-            Line::from(vec![s("  (__)____(____)      ", PEACH, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( •̀ . •́ )   "), m("💻")]),
+            Line::from(vec![w("    ___/      ) \\  "), b("[===]")]),
+            Line::from(vec![w("   (__)____(____)       ")]),
         ],
+        // 3: Right paw slams down on keys! Left paw at peak
+        3 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( •̀ . •́ )   "), m("💻")]),
+            Line::from(vec![w("    ___/   )    \\  "), b("[===]")]),
+            Line::from(vec![w("   (__)____(____)       ")]),
+        ],
+        // 4: Right paw rebounding, left paw initiating descent
+        4 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( •̀ . •́ )   "), m("💻")]),
+            Line::from(vec![w("      /   )   ) \\  "), b("[===]")]),
+            Line::from(vec![w("     (____)____(__)     ")]),
+        ],
+        // 5: Left paw descending fast
+        5 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( •̀ . •́ )   "), m("💻")]),
+            Line::from(vec![w("      /   (      \\ "), b("[===]")]),
+            Line::from(vec![w("     (____)____(__)     ")]),
+        ],
+        // 6: Left paw strikes keyboard
+        6 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( •̀ . •́ )   "), m("💻")]),
+            Line::from(vec![w("      /   (   \\__  "), b("[===]")]),
+            Line::from(vec![w("     (____)____(__)     ")]),
+        ],
+        // 7: Rapid double-tap flurry
         _ => vec![
-            Line::from(vec![s("      /\\_/\\   ", PEACH, true), s("⚡      ", YELLOW, true)]),
-            Line::from(vec![s("     ( ˶•̀ ᵥ •́˶)  ", PEACH, true), s("💻", TEAL, true)]),
-            Line::from(vec![
-                s("   ___/   \\___  ", PEACH, true),
-                s("[===] ", MAUVE, true),
-                s("click!", TEAL, true),
-            ]),
-            Line::from(vec![s("  (____)____(____)    ", PEACH, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( •̀ . •́ )   "), m("💻")]),
+            Line::from(vec![w("    ___/  (   \\__  "), b("[===]")]),
+            Line::from(vec![w("   (____)____(__)       ")]),
         ],
     };
 
-    StyledFrame {
-        lines,
-        primary_color: TEAL,
-    }
+    StyledFrame { lines }
 }
 
+// 8-Frame Cheering: Crouch, leap, paws up flutter, soft landing
 fn render_cheering(tick: usize) -> StyledFrame {
-    let frame_idx = tick % 4;
-    let lines = match frame_idx {
+    let f = tick % 8;
+    let lines = match f {
+        // 0: Crouch anticipating jump
         0 => vec![
-            Line::from(vec![s("      /\\_/\\   ", GREEN, true), s("✨", YELLOW, true)]),
-            Line::from(vec![s("    \\( ^.^ )/  ", GREEN, true), s("🌟", YELLOW, true)]),
-            Line::from(vec![s("     /(   )\\   ", GREEN, true), s("*purr*", PINK, true)]),
-            Line::from(vec![s("    (__)_(__)         ", GREEN, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( > . < )        ")]),
+            Line::from(vec![w("       / (   ) \\        ")]),
+            Line::from(vec![w("      (_________)       ")]),
         ],
+        // 1: Spring up, arms raising
         1 => vec![
-            Line::from(vec![s("      /\\_/\\   ", GREEN, true), s("🎉", YELLOW, true)]),
-            Line::from(vec![s("    \\( >.< )/ ", GREEN, true), s("✨", YELLOW, true)]),
-            Line::from(vec![s("      )   (    ", GREEN, true), s("*meow!*", PINK, true)]),
-            Line::from(vec![s("     (__)_(__)        ", GREEN, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("      /( ^ . ^ )\\       ")]),
+            Line::from(vec![w("       / (   ) \\        ")]),
+            Line::from(vec![w("      (__)   (__)       ")]),
         ],
+        // 2: Jump peak! Arms high, sparkles
         2 => vec![
-            Line::from(vec![s("      /\\_/\\   ", GREEN, true), s("🌟", YELLOW, true)]),
-            Line::from(vec![s("     \\(^o^)/   ", GREEN, true), s("✨", YELLOW, true)]),
-            Line::from(vec![s("     /(   )\\   ", GREEN, true), s("*hooray!*", PINK, true)]),
-            Line::from(vec![s("    (__)_(__)         ", GREEN, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\     "), m("✨")]),
+            Line::from(vec![w("      \\( ^ . ^ )/       ")]),
+            Line::from(vec![w("       /(     )\\        ")]),
+            Line::from(vec![w("      (__)   (__)       ")]),
         ],
+        // 3: Float at apex, joyful expression
+        3 => vec![
+            Line::from(vec![m("   ✨   "), w("/\\_/\\           ")]),
+            Line::from(vec![w("      \\( ^ o ^ )/       ")]),
+            Line::from(vec![w("        )   (           ")]),
+            Line::from(vec![w("       (__)_(__)        ")]),
+        ],
+        // 4: Float celebration
+        4 => vec![
+            Line::from(vec![w("        /\\_/\\     "), m("✨")]),
+            Line::from(vec![w("      \\( ˶^.^˶ )/       ")]),
+            Line::from(vec![w("        )   (           ")]),
+            Line::from(vec![w("       (__)_(__)        ")]),
+        ],
+        // 5: Descending back down
+        5 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("      /( ^ . ^ )\\       ")]),
+            Line::from(vec![w("       / (   ) \\        ")]),
+            Line::from(vec![w("      (__)   (__)       ")]),
+        ],
+        // 6: Landing cushion bounce
+        6 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( ^ . ^ )        ")]),
+            Line::from(vec![w("       / (   ) \\        ")]),
+            Line::from(vec![w("      (_________)       ")]),
+        ],
+        // 7: Back on feet, happy smile
         _ => vec![
-            Line::from(vec![s("      /\\_/\\   ", GREEN, true), s("♡", PINK, true)]),
-            Line::from(vec![s("    \\( ˶^.^˶)/ ", GREEN, true), s("🎉", YELLOW, true)]),
-            Line::from(vec![s("      )   (    ", GREEN, true), s("*purr*", PINK, true)]),
-            Line::from(vec![s("     (__)_(__)        ", GREEN, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( ^ . ^ )        ")]),
+            Line::from(vec![w("       /       \\        ")]),
+            Line::from(vec![w("      (__)   (__)       ")]),
         ],
     };
 
-    StyledFrame {
-        lines,
-        primary_color: GREEN,
-    }
+    StyledFrame { lines }
 }
 
+// 8-Frame Sleeping: Peaceful loaf breathing cycle + smoothly rising zZz
 fn render_sleeping(tick: usize) -> StyledFrame {
-    let frame_idx = tick % 4;
-    let lines = match frame_idx {
+    let f = tick % 8;
+    let lines = match f {
         0 => vec![
-            Line::from(vec![s("      /\\_/\\           ", BLUE, true)]),
-            Line::from(vec![s("     ( -.- )  ", BLUE, true), s("z", SAPPHIRE, true)]),
-            Line::from(vec![s("    / (   ) \\         ", BLUE, true)]),
-            Line::from(vec![s("   (____)____)        ", BLUE, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( - . - )  "), m("z     ")]),
+            Line::from(vec![w("      / (     ) \\       ")]),
+            Line::from(vec![w("     (___________)      ")]),
         ],
         1 => vec![
-            Line::from(vec![s("      /\\_/\\           ", BLUE, true)]),
-            Line::from(vec![s("     ( -.- )   ", BLUE, true), s("zZ", SAPPHIRE, true)]),
-            Line::from(vec![s("    / (   ) \\         ", BLUE, true)]),
-            Line::from(vec![s("   (_____)____)       ", BLUE, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( - . - )   "), m("z    ")]),
+            Line::from(vec![w("      /  (   )  \\       ")]),
+            Line::from(vec![w("     (___________)      ")]),
         ],
         2 => vec![
-            Line::from(vec![s("      /\\_/\\           ", BLUE, true)]),
-            Line::from(vec![s("     ( u.u )    ", BLUE, true), s("zZz", SAPPHIRE, true)]),
-            Line::from(vec![s("    / (   ) \\         ", BLUE, true)]),
-            Line::from(vec![s("   (____)____)        ", BLUE, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\     "), m("z     ")]),
+            Line::from(vec![w("       ( - . - )   "), m("Z    ")]),
+            Line::from(vec![w("      /  (   )  \\       ")]),
+            Line::from(vec![w("     (___________)      ")]),
+        ],
+        3 => vec![
+            Line::from(vec![w("        /\\_/\\      "), m("Z    ")]),
+            Line::from(vec![w("       ( u . u )    "), m("z   ")]),
+            Line::from(vec![w("      /  (   )  \\       ")]),
+            Line::from(vec![w("     (___________)      ")]),
+        ],
+        4 => vec![
+            Line::from(vec![w("        /\\_/\\       "), m("z   ")]),
+            Line::from(vec![w("       ( u . u )     "), m("Z  ")]),
+            Line::from(vec![w("      /  (   )  \\       ")]),
+            Line::from(vec![w("     (___________)      ")]),
+        ],
+        5 => vec![
+            Line::from(vec![w("        /\\_/\\        "), m("Z  ")]),
+            Line::from(vec![w("       ( - . - )        ")]),
+            Line::from(vec![w("      / (     ) \\       ")]),
+            Line::from(vec![w("     (___________)      ")]),
+        ],
+        6 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( - . - )        ")]),
+            Line::from(vec![w("      / (     ) \\       ")]),
+            Line::from(vec![w("     (___________)      ")]),
         ],
         _ => vec![
-            Line::from(vec![s("      /\\_/\\   ", BLUE, true), s("*snore*", TEAL, true)]),
-            Line::from(vec![s("     ( u.u )     ", BLUE, true), s("ZzZ", SAPPHIRE, true)]),
-            Line::from(vec![s("    / (   ) \\         ", BLUE, true)]),
-            Line::from(vec![s("   (_____)____)       ", BLUE, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( - . - )        ")]),
+            Line::from(vec![w("      / (     ) \\       ")]),
+            Line::from(vec![w("     (___________)      ")]),
         ],
     };
 
-    StyledFrame {
-        lines,
-        primary_color: BLUE,
-    }
+    StyledFrame { lines }
 }
 
+// 8-Frame Frustrated: Ear droop, teardrop welling, falling, sigh
 fn render_frustrated(tick: usize) -> StyledFrame {
-    let frame_idx = tick % 4;
-    let lines = match frame_idx {
+    let f = tick % 8;
+    let lines = match f {
         0 => vec![
-            Line::from(vec![s("      \\___/           ", RED, true)]),
-            Line::from(vec![s("     ( T.T )          ", RED, true)]),
-            Line::from(vec![s("    / (   ) \\         ", RED, true)]),
-            Line::from(vec![s("   (  ( )  )  ", RED, true), s("💧", SAPPHIRE, true)]),
-            Line::from(vec![s("    (__)_(__)         ", RED, true)]),
+            Line::from(vec![w("        \\___/           ")]),
+            Line::from(vec![w("       ( T . T )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
         1 => vec![
-            Line::from(vec![s("      \\___/           ", RED, true)]),
-            Line::from(vec![s("     ( T.T )          ", RED, true)]),
-            Line::from(vec![s("    / (   ) \\  ", RED, true), s("💧", SAPPHIRE, true)]),
-            Line::from(vec![s("   (  ( )  )          ", RED, true)]),
-            Line::from(vec![s("    (__)_(__) ", RED, true), s("💧", SAPPHIRE, true)]),
+            Line::from(vec![w("        \\___/           ")]),
+            Line::from(vec![w("       ( T . T )  "), m("💧    ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
         2 => vec![
-            Line::from(vec![s("      \\___/           ", RED, true)]),
-            Line::from(vec![s("     ( ;.; )  ", RED, true), s("*sniff*", GRAY, true)]),
-            Line::from(vec![s("    / (   ) \\         ", RED, true)]),
-            Line::from(vec![s("   (  ( )  )  ", RED, true), s("💧", SAPPHIRE, true)]),
-            Line::from(vec![s("    (__)_(__)         ", RED, true)]),
+            Line::from(vec![w("        \\___/           ")]),
+            Line::from(vec![w("       ( T . T )        ")]),
+            Line::from(vec![w("      / (   ) \\   "), m("💧   ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        3 => vec![
+            Line::from(vec![w("        \\___/           ")]),
+            Line::from(vec![w("       ( T . T )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )    "), m("💧   ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        4 => vec![
+            Line::from(vec![w("        \\___/           ")]),
+            Line::from(vec![w("       ( ; . ; )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)   "), m(".     ")]),
+        ],
+        5 => vec![
+            Line::from(vec![w("        \\___/           ")]),
+            Line::from(vec![w("       ( > . < )        ")]),
+            Line::from(vec![w("      / (o o) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        6 => vec![
+            Line::from(vec![w("        \\___/           ")]),
+            Line::from(vec![w("       ( - . - )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
         _ => vec![
-            Line::from(vec![s("      \\___/           ", RED, true)]),
-            Line::from(vec![s("     ( >.< )          ", RED, true)]),
-            Line::from(vec![s("    / (o o) \\         ", RED, true)]),
-            Line::from(vec![s("   (  ( )  )          ", RED, true)]),
-            Line::from(vec![s("    (__)_(__)         ", RED, true)]),
+            Line::from(vec![w("        \\___/           ")]),
+            Line::from(vec![w("       ( T . T )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
     };
 
-    StyledFrame {
-        lines,
-        primary_color: RED,
-    }
+    StyledFrame { lines }
 }
 
+// 8-Frame Eating: Fish bite, chewing cycle, swallow, happy burp
 fn render_eating(tick: usize) -> StyledFrame {
-    let frame_idx = tick % 4;
-    let lines = match frame_idx {
+    let f = tick % 8;
+    let lines = match f {
         0 => vec![
-            Line::from(vec![s("      /\\_/\\           ", PEACH, true)]),
-            Line::from(vec![s("     ( o.o )          ", PEACH, true)]),
-            Line::from(vec![
-                s("    / (o)o \\  ", PEACH, true),
-                s("><(((°>", SAPPHIRE, true),
-            ]),
-            Line::from(vec![s("   (  ( )  )          ", PEACH, true)]),
-            Line::from(vec![s("    (__)_(__)         ", PEACH, true)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( o . o )        ")]),
+            Line::from(vec![w("      / (o)o \\  "), m("><(((°>")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
         1 => vec![
-            Line::from(vec![s("      /\\_/\\           ", PEACH, true)]),
-            Line::from(vec![s("     ( >.< )  ", PEACH, true), s("*nom*", PINK, true)]),
-            Line::from(vec![
-                s("    / (o)o \\  ", PEACH, true),
-                s(">==<", SAPPHIRE, true),
-            ]),
-            Line::from(vec![s("   (  ( )  )          ", PEACH, true)]),
-            Line::from(vec![s("    (__)_(__)         ", PEACH, true)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( > . < )        ")]),
+            Line::from(vec![w("      / (o)o \\  "), m(">==<   ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
         2 => vec![
-            Line::from(vec![s("      /\\_/\\           ", PEACH, true)]),
-            Line::from(vec![
-                s("     ( -.- )  ", PEACH, true),
-                s("*crunch*", YELLOW, true),
-            ]),
-            Line::from(vec![
-                s("    / (o)o \\  ", PEACH, true),
-                s("><>", SAPPHIRE, true),
-            ]),
-            Line::from(vec![s("   (  ( )  )          ", PEACH, true)]),
-            Line::from(vec![s("    (__)_(__)         ", PEACH, true)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( • . - )        ")]),
+            Line::from(vec![w("      / (o)o \\  "), m("><>    ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        3 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( - . • )        ")]),
+            Line::from(vec![w("      / (o)o \\  "), m("><>    ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        4 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( • . - )        ")]),
+            Line::from(vec![w("      / (o)o \\          ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        5 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( > . < )        ")]),
+            Line::from(vec![w("      /  ( )  \\         ")]),
+            Line::from(vec![w("     (____)____)        ")]),
+        ],
+        6 => vec![
+            Line::from(vec![w("        /\\_/\\     "), m("♡     ")]),
+            Line::from(vec![w("       ( ˶^.^˶ )        ")]),
+            Line::from(vec![w("      /  ( )  \\         ")]),
+            Line::from(vec![w("     (____)____)        ")]),
         ],
         _ => vec![
-            Line::from(vec![s("      /\\_/\\   ", PEACH, true), s("*yum!*", PINK, true)]),
-            Line::from(vec![s("     ( ^.^ )  ", PEACH, true), s("♡", PINK, true)]),
-            Line::from(vec![s("    /  ( )  \\         ", PEACH, true)]),
-            Line::from(vec![s("   (____)____)        ", PEACH, true)]),
-            Line::from(vec![s("                      ", GRAY, false)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( ^ . ^ )        ")]),
+            Line::from(vec![w("      /  ( )  \\         ")]),
+            Line::from(vec![w("     (____)____)        ")]),
         ],
     };
 
-    StyledFrame {
-        lines,
-        primary_color: PINK,
-    }
+    StyledFrame { lines }
 }
 
+// 6-Frame Focused: Alert perk up, eye dart, locked in
 fn render_focused(tick: usize) -> StyledFrame {
-    let frame_idx = tick % 3;
-    let lines = match frame_idx {
+    let f = tick % 6;
+    let lines = match f {
         0 => vec![
-            Line::from(vec![s("      /\\_/\\           ", YELLOW, true)]),
-            Line::from(vec![s("     ( O.o )          ", YELLOW, true)]),
-            Line::from(vec![s("    / (   ) \\  ", YELLOW, true), s("?", PEACH, true)]),
-            Line::from(vec![s("   (  ( )  )          ", YELLOW, true)]),
-            Line::from(vec![s("    (__)_(__)         ", YELLOW, true)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( O . o )        ")]),
+            Line::from(vec![w("      / (   ) \\   "), m("?     ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
         1 => vec![
-            Line::from(vec![s("      /\\_/\\   ", YELLOW, true), s("!", RED, true)]),
-            Line::from(vec![s("     ( O.O )          ", YELLOW, true)]),
-            Line::from(vec![s("    / (   ) \\         ", YELLOW, true)]),
-            Line::from(vec![s("   (  ( )  )          ", YELLOW, true)]),
-            Line::from(vec![s("    (__)_(__)         ", YELLOW, true)]),
+            Line::from(vec![w("        /\\_/\\     "), m("!     ")]),
+            Line::from(vec![w("       ( O . O )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        2 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( o . O )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        3 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( O . O )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
+        ],
+        4 => vec![
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( • . • )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
         _ => vec![
-            Line::from(vec![s("      /\\_/\\           ", YELLOW, true)]),
-            Line::from(vec![s("     ( o.O )          ", YELLOW, true)]),
-            Line::from(vec![s("    / (   ) \\  ", YELLOW, true), s("...", GRAY, true)]),
-            Line::from(vec![s("   (  ( )  )          ", YELLOW, true)]),
-            Line::from(vec![s("    (__)_(__)         ", YELLOW, true)]),
+            Line::from(vec![w("        /\\_/\\           ")]),
+            Line::from(vec![w("       ( O . O )        ")]),
+            Line::from(vec![w("      / (   ) \\         ")]),
+            Line::from(vec![w("     (  ( )  )          ")]),
+            Line::from(vec![w("      (__)_(__)         ")]),
         ],
     };
 
-    StyledFrame {
-        lines,
-        primary_color: YELLOW,
-    }
+    StyledFrame { lines }
 }
